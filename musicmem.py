@@ -1,6 +1,7 @@
 import pydub
 import genanki as ga
 import os
+import argparser
 
 def make_cloze(start_point, end_point, prompt_len, ans_len, music_name, out_path):
     clips = []
@@ -29,36 +30,40 @@ if __name__ == '__main__':
     ans_len = 5 * 1000
     end_len = 5 * 1000
     clip_list = make_cloze(start_point, end_point, prompt_len, ans_len, music_name, './audio_data')
+    song_name = 'Julian Lage - In Heaven'
 
+    # define anki deck params
     my_model = ga.Model(
         1607392319,
         'Simple Model',
         fields=[
-        {'name': 'Question'},
+        {'name': 'SongName'},
+        {'name': 'Prompt'},
         {'name': 'Answer'},
-        {'name': 'MyMedia'}
         ],
         templates=[
         {
           'name': 'Card 1',
-          'qfmt': '{{Question}}',
-          'afmt': '{{FrontSide}}<hr id="answer">{{MyMedia}}',
+          'qfmt': '{{SongName}}{{Prompt}}',
+          'afmt': '{{Answer}}',
         },
         ])
     my_deck = ga.Deck(
         2059400110,
-        'test')
+        music_name)
     my_package = ga.Package(my_deck)
     clip_list_flat = []
     for tup in clip_list:
         clip_list_flat.append(tup[0])
         clip_list_flat.append(tup[1])
     my_package.media_files = clip_list_flat
-    my_note = ga.Note(
-        model = my_model,
-        fields = ['test', 'test ans'
-            , '[sound:' + clip_list[0][0].split('/')[-1]+ ']'
-            ])
-    my_deck.add_note(my_note)
-    my_package.write_to_file('output.apkg')
+    for tup in clip_list:
+        my_note = ga.Note(
+            model = my_model,
+            fields = [ song_name,
+                '[sound:' + tup[0].split('/')[-1]+ ']'
+                ,'[sound:' + tup[1].split('/')[-1]+ ']'
+                ])
+        my_deck.add_note(my_note)
+    my_package.write_to_file(music_name+'.apkg')
 
