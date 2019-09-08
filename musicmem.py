@@ -1,7 +1,8 @@
 import pydub
 import genanki as ga
 import os
-import argparser
+import argparse
+import random
 
 def make_cloze(start_point, end_point, prompt_len, ans_len, music_name, out_path):
     clips = []
@@ -20,18 +21,27 @@ def make_cloze(start_point, end_point, prompt_len, ans_len, music_name, out_path
 
 
 if __name__ == '__main__':
-    music_file = './test_data/in_heaven.mp3'
+    parser = argparse.ArgumentParser()
+    parser.add_argument('music_file')
+    parser.add_argument('start_point', type=int)
+    parser.add_argument('end_point', type=int)
+    parser.add_argument('prompt_len', type=int)
+    parser.add_argument('ans_len', type=int)
+    parser.add_argument('music_name')
+    args = parser.parse_args()
+
+
+
+    music_file = args.music_file
     music = pydub.AudioSegment.from_mp3(music_file)
     music_name = music_file.split('/')[-1].split('.')[0]
     os.makedirs('./audio_data', exist_ok=True)
-    start_point = 0
-    end_point = 30 * 1000
-    prompt_len = 5 * 1000
-    ans_len = 5 * 1000
-    end_len = 5 * 1000
+    start_point = args.start_point * 1000
+    end_point = args.end_point * 1000
+    prompt_len = args.prompt_len * 1000
+    ans_len = args.ans_len * 1000
     clip_list = make_cloze(start_point, end_point, prompt_len, ans_len, music_name, './audio_data')
-    song_name = 'Julian Lage - In Heaven'
-
+    song_name = args.music_name
     # define anki deck params
     my_model = ga.Model(
         1607392319,
@@ -49,7 +59,7 @@ if __name__ == '__main__':
         },
         ])
     my_deck = ga.Deck(
-        2059400110,
+        random.randrange(1 << 30, 1 << 31),
         music_name)
     my_package = ga.Package(my_deck)
     clip_list_flat = []
