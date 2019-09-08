@@ -1,5 +1,5 @@
 # musicmem
-Like clozeoverlapper but for audio. May be useful for memorizing things like jazz solos.
+Generates overlapping audio clips as Anki flashcards, like [Cloze Overlapper](https://ankiweb.net/shared/info/969733775) but for audio. May be useful for memorizing things like jazz solos.
 
 Usage 
 ---
